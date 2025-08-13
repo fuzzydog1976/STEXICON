@@ -68,9 +68,15 @@
             <label for="enterMessageInput" class="block text-lg font-medium text-gray-700">
                 Enter Message:
             </label>
-            <textarea id="enterMessageInput" rows="3"
-                      class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base resize-y"
-                      placeholder="Type your message to encrypt..."></textarea>
+            <div class="flex gap-2">
+                <textarea id="enterMessageInput" rows="3"
+                          class="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base resize-y"
+                          placeholder="Type your message to encrypt..."></textarea>
+                <button id="pasteEnterMessageBtn"
+                        class="px-5 py-2 bg-yellow-600 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-300 ease-in-out">
+                    Paste
+                </button>
+            </div>
             <button id="encryptBtn"
                     class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out">
                 Encrypt
@@ -137,6 +143,7 @@
         const cipherKeyInput = document.getElementById('cipherKeyInput');
         const submitKeyBtn = document.getElementById('submitKeyBtn');
         const enterMessageInput = document.getElementById('enterMessageInput');
+        const pasteEnterMessageBtn = document.getElementById('pasteEnterMessageBtn'); // New button reference
         const encryptBtn = document.getElementById('encryptBtn');
         const encryptedMessageOutput = document.getElementById('encryptedMessageOutput');
         const copyCipherBtn = document.getElementById('copyCipherBtn');
@@ -294,12 +301,24 @@
             }
         });
 
-        // Paste Cipher Button
+        // Paste into Enter Message Button (NEW)
+        pasteEnterMessageBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                enterMessageInput.value = text;
+                displayMessage("Text pasted into message input!", 'text-blue-600');
+            } catch (err) {
+                console.error('Failed to read clipboard contents: ', err);
+                displayMessage("Failed to paste. Clipboard access denied or empty. Please manually paste.", 'text-red-600');
+            }
+        });
+
+        // Paste Cipher Button (for encrypted messages)
         pasteCipherBtn.addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
                 pasteEncryptedMessageInput.value = text;
-                displayMessage("Message pasted from clipboard!", 'text-blue-600');
+                displayMessage("Encrypted message pasted from clipboard!", 'text-blue-600');
             } catch (err) {
                 console.error('Failed to read clipboard contents: ', err);
                 displayMessage("Failed to paste. Clipboard access denied or empty. Please manually paste into the box.", 'text-red-600');
